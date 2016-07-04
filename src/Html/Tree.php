@@ -18,12 +18,13 @@ class Tree extends \Rsi\Html{
     $html = '';
     foreach($items as $caption => $item){
       if(!is_array($item)) $item = ['link' => $item];
-      if(array_key_exists('link',$item)) $caption = "<a href='{$item['link']}'>$caption</a>";
-      $html .=
-        "<li" . (array_key_exists('class',$item) ? " class='{$item['class']}'" : '') . ">" .
-        $caption .
-        (array_key_exists('items',$item) ? $this->tree($item['items']) : '') .
-        "</li>\n";
+      $html .= '<li';
+      foreach($item as $key => $value) if($value) switch($key){
+        case 'link': $caption = "<a href='{$item['link']}'>$caption</a>"; break;
+        case 'items': $caption .= $this->tree($value); break;
+        default: $html .= " $key='" . htmlspecialchars($value) . "'";
+      }
+      $html .= ">$caption</li>\n";
     }
     return "<ul>\n$html</ul>";
   }
